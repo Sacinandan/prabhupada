@@ -16,9 +16,9 @@ pub enum Command {
 
 pub async fn answer(bot: Bot, msg: Message) -> ResponseResult<()> {
     let message = msg.text().unwrap_or_default().to_string();
-    let username = msg.from().and_then(|user| user.username.clone()).unwrap_or_default();
+    let username = msg.from().and_then(|user| user.username.clone()).unwrap_or_else(|| String::from("unknown"));
 
-    info!("{}: {}", username, message);
+    info!("@{}: {}", username, message);
 
     if message.starts_with('/') {
         let response = match Command::parse(&message, "") {

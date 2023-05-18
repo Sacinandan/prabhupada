@@ -2,13 +2,19 @@
 
 OpenAI Telegram Bot
 
-![version](https://img.shields.io/badge/version-0.1.0-green.svg)
+![version](https://img.shields.io/badge/version-0.1.1-green.svg)
 
 <img src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/rust/rust.png" class="d-block rounded-1 mr-3 flex-shrink-0" alt="rust" width="64" height="64">
 
 ## Links
 
 - [Telegram](https://t.me/BhaktivedantaSwamiBot)
+
+## Roadmap
+
+- Supporting answers based on individual private conversation history
+- Donations
+- Powerful cloud hosting
 
 ## Installation
 

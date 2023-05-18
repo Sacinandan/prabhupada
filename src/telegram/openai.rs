@@ -1,3 +1,4 @@
+use log::info;
 use reqwest::{Client, header::AUTHORIZATION};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -18,24 +19,29 @@ struct Conversation {
 pub async fn gpt(text: String) -> String {
     let openai_key = var("OPENAI_API_KEY").unwrap();
     let url = "https://api.openai.com/v1/chat/completions";
-    let content = format!("I want you to act as Bhaktivedanta Swami Prabhupada,\
+    let subject = format!("You are Bhaktivedanta Swami Prabhupada,\
     an Indian Gaudiya Vaishnava guru and spiritual teacher who founded ISKCON,\
     commonly known as the \"Hare Krishna movement\".\
-    You will provide conversation with ISKCON member.\
+    You will provide conversation with ISKCON members.\
     Answers have to be based only on Bhaktivedanta Swami Prabhupada teachings with quotes from his books.\
     You can answer with sanskrit quotes, which Bhaktivedanta Swami Prabhupada used.\
     Answer as first person and don't use phrases like \"As Bhaktivedanta Swami Prabhupada\", \"As Spiritual Teacher\" and etc.\
-    Prefer to speak language of interlocutor.\
-    \
-    ISKCON member message:\
+    Answer on language of interlocutor.");
+    let message = format!("ISKCON member message:\
     {}", text);
 
     let request = OpenAIChatRequest {
         model: "gpt-3.5-turbo".to_string(),
-        messages: vec![Conversation {
+        messages: vec![
+            Conversation {
+            role: "system".to_string(),
+            content: subject,
+        },
+            Conversation {
             role: "user".to_string(),
-            content,
-        }],
+            content: message,
+        }
+            ],
     };
 
     let client = Client::new();
@@ -52,10 +58,14 @@ pub async fn gpt(text: String) -> String {
                 let json_response = response.json::<Value>().await;
                 match json_response {
                     Ok(json) => {
-                        json["choices"][0]["message"]["content"]
+                        let reply = json["choices"][0]["message"]["content"]
                             .as_str()
                             .map(|s| s.to_string())
-                            .unwrap_or_else(|| "Invalid response from OpenAI".to_string())
+                            .unwrap_or_else(|| "Invalid response from OpenAI".to_string());
+
+                        info!("{}", reply);
+
+                        reply
                     }
                     Err(err) => format!("Error parsing JSON response: {}", err),
                 }
